@@ -1,0 +1,10 @@
+mlx==0.31.2
+mlx-metal==0.31.2
+mlx-lm==0.31.3
+huggingface_hub==1.14.0
+transformers==5.8.0
+tokenizers==0.22.2
+sentencepiece==0.2.1
+safetensors==0.7.0
+numpy==2.4.4
+coremltools==9.0

@@ -15,7 +15,9 @@ struct FoundationModelsSmoke {
 
         do {
             let session = LanguageModelSession()
-            let response = try await session.respond(to: "Reply with exactly: FOUNDATION_MODELS_OK")
+            let response = try await session.respond(
+                to: "What is 2 + 2? Answer with one short sentence."
+            )
             print("response=\(response.content)")
         } catch {
             print("error=\(error)")

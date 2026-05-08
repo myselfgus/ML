@@ -115,6 +115,13 @@ sequenceDiagram
 
 ## Como executar
 
+### Setup local completo
+
+```bash
+./script/setup_local_ml_stack.sh
+./script/check_local_ml_stack.sh
+```
+
 ### Build local
 
 ```bash
@@ -126,7 +133,7 @@ swift build
 
 ```bash
 env HOME=/Users/healthOS/ML CLANG_MODULE_CACHE_PATH=/Users/healthOS/ML/.build/ModuleCache \
-swiftc -parse-as-library script/foundationmodels_smoke.swift -o .build/foundationmodels_smoke && \
+xcrun swiftc -parse-as-library script/foundationmodels_smoke.swift -o .build/foundationmodels_smoke && \
 ./.build/foundationmodels_smoke
 ```
 
@@ -134,6 +141,21 @@ swiftc -parse-as-library script/foundationmodels_smoke.swift -o .build/foundatio
 
 ```bash
 .venv-mlx/bin/python script/mlx_smoke.py
+.venv-mlx/bin/python script/mlx_lm_generate.py --prompt "Explique MLX-LM em portugues."
+```
+
+### Ollama local
+
+```bash
+./script/ollama_smoke.sh
+OLLAMA_MODEL=gemma4 ./script/ollama_smoke.sh "Resuma Apple Intelligence em uma frase."
+OLLAMA_PULL_IF_MISSING=1 OLLAMA_MODEL=qwen2.5:0.5b ./script/ollama_smoke.sh
+```
+
+### llama.cpp
+
+```bash
+llama-cli --version
 ```
 
 ### Trilha auditavel completa
@@ -150,6 +172,9 @@ Objetivo: deixar uma cadeia verificavel de "o que usar", "como provar" e "onde r
 |---|---|---|---|
 | `Foundation Models` | App / Swift | `script/foundationmodels_smoke.swift` | saida do smoke test |
 | `MLX` | Python local Apple Silicon | `script/mlx_smoke.py` | device GPU e tensor result |
+| `MLX-LM` | LLM open source local | `script/mlx_lm_generate.py` | geracao por modelo Hugging Face/MLX |
+| `Ollama` | Servidor local de modelos | `script/ollama_smoke.sh` | modelo local e resposta via runtime Ollama |
+| `llama.cpp` | Runtime GGUF local | `llama-cli --version` e modelos `.gguf` | binario Metal-ready |
 | `Core ML / Create ML` | Xcode / model export | integrar `.mlmodel` no bundle | modelo presente e inferencia no app |
 | `Apple Intelligence + PCC` | Shortcuts / sistema | criar atalho com `Use Model -> Private Cloud Compute` | `Apple_Intelligence_Report.json` |
 
