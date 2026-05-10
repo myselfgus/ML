@@ -6,13 +6,15 @@ import SwiftUI
 @MainActor
 final class DemoInferenceViewModel {
     var availabilityText = "Checking..."
+    var selectedProviderID = "apple.foundation-models.xpc-host"
     var prompt = "Explique em 3 linhas o que é Apple Intelligence."
     var responseText = ""
     var errorText: String?
     var isGenerating = false
 
     @ObservationIgnored
-    private let provider = AppleFoundationModelProvider()
+    private let xpcProvider = AppleHostXPCInferenceProvider()
+    private let directProvider = AppleFoundationModelProvider()
     @ObservationIgnored
     private let registry = InferenceProviderRegistry()
     @ObservationIgnored
@@ -21,16 +23,26 @@ final class DemoInferenceViewModel {
     init() {
         self.router = InferenceRouter(registry: registry)
 
-        Task { [registry, provider] in
+        Task { [registry, xpcProvider, directProvider] in
             do {
-                try await registry.register(provider, policy: .replaceExisting)
-                let availability = await provider.availability()
+                try await registry.register(xpcProvider, policy: .replaceExisting)
+                try await registry.register(directProvider, policy: .replaceExisting)
+
+                let xpcAvailability = await xpcProvider.availability()
+                let directAvailability = await directProvider.availability()
                 await MainActor.run {
-                    switch availability {
+                    switch xpcAvailability {
                     case .available:
-                        self.availabilityText = "available"
+                        self.selectedProviderID = xpcProvider.id.rawValue
+                        self.availabilityText = "xpc-host: available"
                     case let .unavailable(reason):
-                        self.availabilityText = "unavailable: \(reason)"
+                        self.selectedProviderID = directProvider.id.rawValue
+                        switch directAvailability {
+                        case .available:
+                            self.availabilityText = "xpc-host unavailable (\(reason)); fallback direct available"
+                        case let .unavailable(directReason):
+                            self.availabilityText = "xpc-host unavailable (\(reason)); direct unavailable (\(directReason))"
+                        }
                     }
                 }
             } catch {
@@ -50,7 +62,8 @@ final class DemoInferenceViewModel {
 
         let request = InferenceRequest(
             prompt: trimmedPrompt,
-            systemPrompt: "Você é um assistente técnico objetivo."
+            systemPrompt: "Você é um assistente técnico objetivo.",
+            preferredProviderID: InferenceProviderID(rawValue: selectedProviderID)
         )
 
         isGenerating = true
@@ -84,6 +97,7 @@ struct DemoInferenceView: View {
                 .font(.title2.weight(.semibold))
 
             LabeledContent("Provider") { Text("apple.foundation-models") }
+            LabeledContent("Selected Provider") { Text(viewModel.selectedProviderID) }
             LabeledContent("Availability") { Text(viewModel.availabilityText) }
 
             Text("Prompt")

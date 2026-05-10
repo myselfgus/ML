@@ -8,16 +8,48 @@
 
 /* Begin PBXBuildFile section */
 		A1B2000D9F00100000000001 /* MLInferenceCore in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2000C9F00100000000001 /* MLInferenceCore */; };
+		A1B3000A9F00100000000001 /* MLInferenceCore in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2000C9F00100000000001 /* MLInferenceCore */; };
+		A1B3000F9F00100000000001 /* AppleMLStarterDemoInferenceXPCService.xpc in Embed XPC Services */ = {isa = PBXBuildFile; fileRef = A1B300019F00100000000001 /* AppleMLStarterDemoInferenceXPCService.xpc */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A1B300129F00100000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A1B2000A9F00100000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A1B300069F00100000000001;
+			remoteInfo = AppleMLStarterDemoInferenceXPCService;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A1B300109F00100000000001 /* Embed XPC Services */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/XPCServices";
+			dstSubfolderSpec = 16;
+			files = (
+				A1B3000F9F00100000000001 /* AppleMLStarterDemoInferenceXPCService.xpc in Embed XPC Services */,
+			);
+			name = "Embed XPC Services";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		A1B200019F00100000000001 /* AppleMLStarterDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AppleMLStarterDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B300019F00100000000001 /* AppleMLStarterDemoInferenceXPCService.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = AppleMLStarterDemoInferenceXPCService.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		A1B200029F00100000000001 /* AppleMLStarterDemo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = AppleMLStarterDemo;
+			sourceTree = "<group>";
+		};
+		A1B300029F00100000000001 /* AppleMLStarterDemoXPCService */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = AppleMLStarterDemoXPCService;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -31,6 +63,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A1B300039F00100000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B3000A9F00100000000001 /* MLInferenceCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -38,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				A1B200029F00100000000001 /* AppleMLStarterDemo */,
+				A1B300029F00100000000001 /* AppleMLStarterDemoXPCService */,
 				A1B200059F00100000000001 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -46,6 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				A1B200019F00100000000001 /* AppleMLStarterDemo.app */,
+				A1B300019F00100000000001 /* AppleMLStarterDemoInferenceXPCService.xpc */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -60,10 +102,12 @@
 				A1B200079F00100000000001 /* Sources */,
 				A1B200039F00100000000001 /* Frameworks */,
 				A1B200089F00100000000001 /* Resources */,
+				A1B300109F00100000000001 /* Embed XPC Services */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				A1B300139F00100000000001 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				A1B200029F00100000000001 /* AppleMLStarterDemo */,
@@ -76,6 +120,29 @@
 			productReference = A1B200019F00100000000001 /* AppleMLStarterDemo.app */;
 			productType = "com.apple.product-type.application";
 		};
+		A1B300069F00100000000001 /* AppleMLStarterDemoInferenceXPCService */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1B300099F00100000000001 /* Build configuration list for PBXNativeTarget "AppleMLStarterDemoInferenceXPCService" */;
+			buildPhases = (
+				A1B300079F00100000000001 /* Sources */,
+				A1B300039F00100000000001 /* Frameworks */,
+				A1B300089F00100000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				A1B300029F00100000000001 /* AppleMLStarterDemoXPCService */,
+			);
+			name = AppleMLStarterDemoInferenceXPCService;
+			packageProductDependencies = (
+				A1B2000C9F00100000000001 /* MLInferenceCore */,
+			);
+			productName = AppleMLStarterDemoInferenceXPCService;
+			productReference = A1B300019F00100000000001 /* AppleMLStarterDemoInferenceXPCService.xpc */;
+			productType = "com.apple.product-type.xpc-service";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -87,6 +154,9 @@
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					A1B200069F00100000000001 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					A1B300069F00100000000001 = {
 						CreatedOnToolsVersion = 26.0;
 					};
 				};
@@ -109,12 +179,20 @@
 			projectRoot = "";
 			targets = (
 				A1B200069F00100000000001 /* AppleMLStarterDemo */,
+				A1B300069F00100000000001 /* AppleMLStarterDemoInferenceXPCService */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		A1B200089F00100000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1B300089F00100000000001 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -131,7 +209,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A1B300079F00100000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A1B300139F00100000000001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A1B300069F00100000000001 /* AppleMLStarterDemoInferenceXPCService */;
+			targetProxy = A1B300129F00100000000001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		A1B200109F00100000000001 /* Debug */ = {
@@ -301,6 +394,44 @@
 			};
 			name = Release;
 		};
+		A1B300149F00100000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.myselfgus.AppleMLStarterDemo.InferenceXPCService;
+				PRODUCT_NAME = AppleMLStarterDemoInferenceXPCService;
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		A1B300159F00100000000001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.myselfgus.AppleMLStarterDemo.InferenceXPCService;
+				PRODUCT_NAME = AppleMLStarterDemoInferenceXPCService;
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -318,6 +449,15 @@
 			buildConfigurations = (
 				A1B200109F00100000000001 /* Debug */,
 				A1B200119F00100000000001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1B300099F00100000000001 /* Build configuration list for PBXNativeTarget "AppleMLStarterDemoInferenceXPCService" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1B300149F00100000000001 /* Debug */,
+				A1B300159F00100000000001 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

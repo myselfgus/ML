@@ -278,4 +278,30 @@ struct InferenceRoutingTests {
             }
         }
     }
+
+    @Test
+    func xpcProviderHandlesMissingServiceSafely() async {
+        let provider = AppleHostXPCInferenceProvider(
+            serviceName: "com.myselfgus.DoesNotExistXPCService",
+            defaultTimeout: .seconds(1)
+        )
+
+        let availability = await provider.availability()
+        if case .unavailable = availability {
+            do {
+                _ = try await provider.generate(.init(prompt: "Hello"))
+                Issue.record("Era esperado erro para serviceName inexistente.")
+            } catch let error as InferenceError {
+                if case .generationFailed = error {
+                    // expected
+                } else if case .timeout = error {
+                    // expected
+                } else {
+                    Issue.record("Erro inesperado: \(error)")
+                }
+            } catch {
+                Issue.record("Erro inesperado: \(error)")
+            }
+        }
+    }
 }
