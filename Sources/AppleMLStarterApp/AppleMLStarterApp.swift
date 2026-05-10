@@ -1,4 +1,3 @@
-import MLFeaturePipeline
 import MLInferenceCore
 import Observation
 import SwiftUI
@@ -7,22 +6,60 @@ import SwiftUI
 @MainActor
 final class InferenceViewModel {
     var inputText = "The local Apple ML pipeline looks stable and fast."
-    var latestResult: PredictionResult?
+    var latestResult: InferenceResponse?
     var errorMessage: String?
+    var providerStatusText = "Checking..."
 
-    private let engine = AppleLocalInferenceEngine()
+    private let registry: InferenceProviderRegistry
+    private let router: InferenceRouter
+    private let foundationProvider = AppleFoundationModelProvider()
 
-    var modelStatus: ModelAssetStatus {
-        engine.modelAssetStatus
+    init() {
+        let registry = InferenceProviderRegistry()
+        self.registry = registry
+        self.router = InferenceRouter(registry: registry)
+
+        Task { [registry, foundationProvider] in
+            do {
+                try await registry.register(foundationProvider, policy: .replaceExisting)
+                let availability = await foundationProvider.availability()
+                await MainActor.run {
+                    switch availability {
+                    case .available:
+                        self.providerStatusText = "available"
+                    case let .unavailable(reason):
+                        self.providerStatusText = "unavailable: \(reason)"
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    self.providerStatusText = "registration failed: \(error.localizedDescription)"
+                }
+            }
+        }
     }
 
     func runPrediction() {
-        do {
-            errorMessage = nil
-            latestResult = try engine.predict(input: PredictionInput(text: inputText))
-        } catch {
-            latestResult = nil
-            errorMessage = error.localizedDescription
+        let router = self.router
+        let request = InferenceRequest(
+            prompt: inputText,
+            systemPrompt: "You are a concise assistant. Reply in one short paragraph."
+        )
+        errorMessage = nil
+
+        Task {
+            do {
+                let response = try await router.generate(request)
+                await MainActor.run {
+                    self.latestResult = response
+                    self.errorMessage = nil
+                }
+            } catch {
+                await MainActor.run {
+                    self.latestResult = nil
+                    self.errorMessage = error.localizedDescription
+                }
+            }
         }
     }
 
@@ -75,21 +112,15 @@ struct InferenceRootView: View {
     }
 
     private var modelStatusCard: some View {
-        GroupBox("Model bundle status") {
+        GroupBox("Provider status") {
             VStack(alignment: .leading, spacing: 10) {
-                LabeledContent("Modelo detectado") {
-                    Text(viewModel.modelStatus.isPresent ? "sim" : "nao")
+                LabeledContent("Provider ID") {
+                    Text("apple.foundation-models")
                 }
-                LabeledContent("Versao esperada") {
-                    Text("\(ModelDescriptor.starter.name) @ \(ModelDescriptor.starter.version)")
+                LabeledContent("Availability") {
+                    Text(viewModel.providerStatusText)
                 }
-                if let path = viewModel.modelStatus.detectedPath {
-                    LabeledContent("Path") {
-                        Text(path)
-                            .textSelection(.enabled)
-                    }
-                }
-                Text(viewModel.modelStatus.note)
+                Text("A app usa apenas a abstração de `MLInferenceCore`; o provider escolhe local/PCC conforme o stack da Apple.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -129,18 +160,11 @@ struct InferenceRootView: View {
         GroupBox("Prediction result") {
             VStack(alignment: .leading, spacing: 12) {
                 if let result = viewModel.latestResult {
-                    LabeledContent("Classe") {
-                        Text(result.predictedClass)
+                    LabeledContent("Provider usado") {
+                        Text(result.providerID.rawValue)
                     }
-                    LabeledContent("Confianca") {
-                        Text(result.confidence.formatted(.percent.precision(.fractionLength(0))))
-                    }
-                    LabeledContent("Latencia") {
-                        Text("\(result.metrics.latencyMilliseconds.formatted(.number.precision(.fractionLength(2)))) ms")
-                    }
-                    LabeledContent("Fallback ativo") {
-                        Text(result.usedFallback ? "sim" : "nao")
-                    }
+                    Text(result.text)
+                        .textSelection(.enabled)
 
                     Divider()
 
